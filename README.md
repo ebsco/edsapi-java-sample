@@ -11,7 +11,6 @@ parameter. The supported types are UID and IP.
 			<param-value>UID</param-value>
 			<!-- <param-value>IP</param-value> -->
 		</init-param>
-		</code>
 		```
 		
 if using UID authentication, you must also provide a valid username and password:
