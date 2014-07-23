@@ -22,6 +22,7 @@ import java.io.InputStreamReader;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,9 +35,11 @@ import com.eds.bean.ApiErrorMessage;
 import com.eds.bean.AuthToken;
 import com.eds.bean.AvailableExpander;
 import com.eds.bean.AvailableLimiter;
+import com.eds.bean.AvailableRelatedContent;
 import com.eds.bean.AvailableSearchField;
 import com.eds.bean.AvailableSort;
 import com.eds.bean.BookJacket;
+import com.eds.bean.CoverArt;
 import com.eds.bean.CustomLink;
 import com.eds.bean.EachFacetValue;
 import com.eds.bean.ExpandersWithAction;
@@ -44,6 +47,9 @@ import com.eds.bean.Facet;
 import com.eds.bean.FacetFilterWithAction;
 import com.eds.bean.FacetValue;
 import com.eds.bean.FacetValueWithAction;
+import com.eds.bean.FullText;
+import com.eds.bean.Header;
+import com.eds.bean.ImageInfo;
 import com.eds.bean.Info;
 import com.eds.bean.Item;
 import com.eds.bean.LimiterValue;
@@ -56,6 +62,7 @@ import com.eds.bean.RetrieveResponse;
 import com.eds.bean.SearchResponse;
 import com.eds.bean.ServiceResponse;
 import com.eds.bean.SessionToken;
+import com.eds.bean.Text;
 import com.eds.bean.ViewResultSettings;
 
 public class JSONProcessor implements IMessageProcessor {
@@ -307,12 +314,84 @@ public class JSONProcessor implements IMessageProcessor {
 				}
 				searchResponse.setFacetfiltersList(facetFilterList);
 			}
+			//Research Starter Placard Data
+			
+			JSONObject searchResult = object.getJSONObject("SearchResult");
+		
+			if(searchResult.has("RelatedContent") && !searchResult.isNull("RelatedContent") )	
+			{
+			JSONObject relatedContent = searchResult.getJSONObject("RelatedContent");
+			JSONArray relatedRecords = relatedContent.getJSONArray("RelatedRecords");
+			ArrayList<Result> researchStarterRecords = new ArrayList<Result>();
+			for(int i = 0; i < relatedRecords.length(); i++)
+			{
+				JSONObject currentRelatedRecord = relatedRecords.getJSONObject(i);
+				if(currentRelatedRecord.getString("Type").equals("rs"))
+				{
+					JSONArray researchStarters = currentRelatedRecord.getJSONArray("Records");
+					
+					for(int e = 0; e < researchStarters.length(); e++)
+					{
+						JSONObject currentResearchStarter = researchStarters.getJSONObject(e);
+						Result aRecord = new Result();
+						aRecord.setResultId(currentResearchStarter.getString("ResultId"));
+						JSONObject JSONheader = currentResearchStarter.getJSONObject("Header");
+						aRecord.setDbId(JSONheader.getString("DbId"));
+						aRecord.setDbLabel(JSONheader.getString("DbLabel"));
+						aRecord.setAn(JSONheader.getString("An"));
+						aRecord.setRelevancyScore(JSONheader.optString("RelevancyScore"));
+						//header.setPubType(JSONheader.getString("PubType"));
+						aRecord.setPubTypeID(JSONheader.getString("PubTypeId"));
+						aRecord.setpLink(currentResearchStarter.getString("PLink"));
+						if(!currentResearchStarter.isNull("ImageInfo") && currentResearchStarter.has("ImageInfo"))
+						{
+						JSONArray JSONImageInfo = currentResearchStarter.getJSONArray("ImageInfo");
+						ImageInfo imageInfo = new ImageInfo();
+						for(int q = 0; q < JSONImageInfo.length(); q++)
+						{
+							JSONObject currentImageInfo = JSONImageInfo.getJSONObject(q);
+							CoverArt coverArt = new CoverArt();
+							coverArt.setSize(currentImageInfo.getString("Size"));
+							coverArt.setTarget(currentImageInfo.getString("Target"));
+							imageInfo.setCoverArt(coverArt);
+						}
+						aRecord.setImageInfo(imageInfo);
+						}
+						JSONObject JSONFullText = currentResearchStarter.getJSONObject("FullText");
+						
+						JSONObject JSONText = JSONFullText.getJSONObject("Text");
+						
+						aRecord.setHtmlAvailable(JSONText.getString("Availability"));
+						
+						
+						JSONArray JSONItems = currentResearchStarter.getJSONArray("Items");
+						HashMap<String, Item> itemsMap = new HashMap<String, Item>();
+						for(int z =0; z < JSONItems.length(); z++)
+						{
+							JSONObject currentJSONItem = JSONItems.getJSONObject(z);
+							Item currentItem = new Item();
+							currentItem.setLabel(currentJSONItem.getString("Label"));
+							currentItem.setGroup(currentJSONItem.getString("Group"));
+							currentItem.setData(currentJSONItem.getString("Data"));
+							
+							itemsMap.put(currentJSONItem.getString("Name"), currentItem);
+						}
+						aRecord.setItemsMap(itemsMap);
+						researchStarterRecords.add(aRecord);
+					}
+					searchResponse.setRecordsList(researchStarterRecords);
+					
+				}
+			}
+			
+			}
+			
 
 			// the end of results with end action
 
 			// Here we set result list's attribute TotalHits and
 			// TotalSearchTime
-			JSONObject searchResult = object.getJSONObject("SearchResult");
+			
 			JSONObject statistics = searchResult.getJSONObject("Statistics");
 
 			String totalHits = statistics.getString("TotalHits");
@@ -339,7 +418,10 @@ public class JSONProcessor implements IMessageProcessor {
 			searchResponse.setResultsList(resultlist);
 
 			// Here we set result list's attribute facetsList
+			
 			ArrayList<Facet> facetsList = new ArrayList<Facet>();
+			if(searchResult.has("AvailableFacets") && !searchResult.isNull("AvailableFacets"))
+			{
 			JSONArray availableFacets = searchResult
 					.getJSONArray("AvailableFacets");
 			if (null != availableFacets) {
@@ -375,8 +457,9 @@ public class JSONProcessor implements IMessageProcessor {
 					facetsList.add(facet);
 				}
 				searchResponse.setFacetsList(facetsList);
+				
 			}
-
+			}
 		} catch (JSONException e) {
 			ApiErrorMessage errorMessage = new ApiErrorMessage();
 			errorMessage.setErrorDescription("Error parsing reponse message");
@@ -522,6 +605,26 @@ public class JSONProcessor implements IMessageProcessor {
 				}
 
 				info.setAvailableExpandersList(availableExpanderList);
+			}
+			
+			if(AvailableSearchCriteria.has("AvailableRelatedContent"))
+			{
+				JSONArray AvailableRelatedContent = AvailableSearchCriteria
+						.getJSONArray("AvailableRelatedContent");
+				ArrayList<AvailableRelatedContent> availableRelatedContentList = new ArrayList<AvailableRelatedContent>();
+				for(int p = 0; p < AvailableRelatedContent.length(); p++)
+				{
+					JSONObject availableRelatedContent = (JSONObject) AvailableRelatedContent
+							.get(p);
+					AvailableRelatedContent currentContent = new AvailableRelatedContent();
+					currentContent.setType(availableRelatedContent.getString("Type"));
+					currentContent.setLabel(availableRelatedContent.getString("Label"));
+					currentContent.setDefaultOn(availableRelatedContent.getString("DefaultOn"));
+					currentContent.setAddAction(availableRelatedContent.getString("AddAction"));
+					availableRelatedContentList.add(currentContent);
+				}
+				info.setAvailableRelatedContent(availableRelatedContentList);
+				
 			}
 
 			if (AvailableSearchCriteria.has("AvailableLimiters")) {
@@ -777,6 +880,7 @@ public class JSONProcessor implements IMessageProcessor {
 		String an = header.getString("An");
 		String pubType = header.optString("PubType");
 		String pubTypeId = header.optString("PubTypeId");
+		String relScore = header.optString("RelevancyScore");
 
 		result.setAn(an);
 		result.setpLink(pLink);
@@ -785,6 +889,7 @@ public class JSONProcessor implements IMessageProcessor {
 		result.setDbId(dbId);
 		result.setResultId(resultId);
 		result.setPubTypeID(pubTypeId);
+		result.setRelevancyScore(relScore);
 
 		// set BookJacket list in the result
 		ArrayList<BookJacket> bookJacketList = new ArrayList<BookJacket>();

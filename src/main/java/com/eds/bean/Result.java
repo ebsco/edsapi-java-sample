@@ -14,6 +14,7 @@
 package com.eds.bean;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class Result {
 
@@ -28,10 +29,13 @@ public class Result {
 	private String pubTypeID;
 	private String pdfLink;
 	private String htmlFullText;
+	private String RelevancyScore;
+	private ImageInfo imageInfo;
 	private ArrayList<BookJacket> bookJacketList = new ArrayList<BookJacket>();
 	private ArrayList<CustomLink> CustomLinkList = new ArrayList<CustomLink>();
 	private ArrayList<Link> otherFullTextLinks = new ArrayList<Link>();
 	private ArrayList<Item> itemList = new ArrayList<Item>();
+	private Map<String, Item> itemsMap;
 
 	public String getPubTypeID() {
 		return pubTypeID;
@@ -137,6 +141,7 @@ public class Result {
 		this.htmlFullText = htmlFullText;
 	}
 
+
 	public String getPdfLink() {
 		return pdfLink;
 	}
@@ -152,5 +157,31 @@ public class Result {
 	public void setOtherFullTextLinks(ArrayList<Link> otherFullTextLinks) {
 		this.otherFullTextLinks = otherFullTextLinks;
 	}
+
+	public Map<String, Item> getItemsMap() {
+		return itemsMap;
+	}
+
+	public void setItemsMap(Map<String, Item> itemsMap) {
+		this.itemsMap = itemsMap;
+	}
+
+	public ImageInfo getImageInfo() {
+		return imageInfo;
+	}
+
+	public void setImageInfo(ImageInfo imageInfo) {
+		this.imageInfo = imageInfo;
+	}
+
+	public String getRelevancyScore() {
+		return RelevancyScore;
+	}
+
+	public void setRelevancyScore(String relevancyScore) {
+		RelevancyScore = relevancyScore;
+	}
+
+
 
 }

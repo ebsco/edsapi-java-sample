@@ -692,3 +692,55 @@ ul.filters {
 	color: #ffffff;
 	margin-left: 15px;
 }
+
+
+.placard-container {
+    border: 1px solid #e7e7e7;
+    display: table;
+    margin-bottom: 20px;
+    width: 100%;
+}
+.placard-container.loading {
+    height: 20px;
+}
+.placard {
+    display: table-row;
+}
+.placard-img {
+    display: table-cell;
+    max-width: 130px;
+    overflow: hidden;
+    vertical-align: middle;
+}
+.placard-img img {
+    float: left;
+    max-height: 130px;
+    max-width: 130px;
+}
+.placard-body {
+    display: table-cell;
+    padding: 5px 10px;
+    vertical-align: middle;
+    width: 100%;
+}
+.placard .title-link {
+    display: inline;
+    padding: 0 0 5px;
+}
+#content .placard p {
+    padding: 0;
+}
+#content .placard .placard-source {
+    color: #535353;
+}
+#content .placard .placard-abstract {
+    padding: 5px 0;
+}
+
+.hidden {
+    clip: rect(1px, 1px, 1px, 1px);
+    height: 1px;
+    overflow: hidden;
+    position: absolute !important;
+    width: 1px;
+}

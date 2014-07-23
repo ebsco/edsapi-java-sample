@@ -19,7 +19,19 @@
 <body>
 	<div class="container">
 		<div class="header">
-			<a id="logo" href="initApp.php"></a>
+			<div>
+				<a href="index.jsp" id="logo"></a>
+			</div>
+			<div class="guestbox">
+				<div>
+					Hello, Guest. <a href="login.jsp">Login</a> for full
+					access.
+				</div>
+			</div>
+			<div class="login">
+				<a href="login.jsp">Login</a>
+			</div>
+
 		</div>
 		<div class="content">
 			<div class="toptabcontent">
@@ -73,6 +85,7 @@
 							<li><a class="icon fulltext" href="<%=link.getUrl()%>"><%=link.getType()%>
 									- Full Text</a></li>
 							<%}
+                        	
                         }%>
 						</ul>
 						<%} %>

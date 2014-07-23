@@ -16,6 +16,7 @@
 package com.eds.servlets;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
@@ -30,6 +31,8 @@ import com.eds.Authentication.AuthenticationFactory;
 import com.eds.Authentication.IAuthenticationManager;
 import com.eds.Model.EDSAPI;
 import com.eds.bean.ApiErrorMessage;
+import com.eds.bean.AvailableRelatedContent;
+import com.eds.bean.Info;
 import com.eds.bean.Query;
 import com.eds.bean.QueryStringParameterNames;
 import com.eds.bean.SearchRequest;
@@ -178,6 +181,21 @@ public class AdvancedSearch extends HttpServlet {
 			searchRequest.query = new Query();
 			searchRequest.query.setFieldCode(fieldCode);
 			searchRequest.query.setTerm(term);
+		}
+		ServletContext application = getServletContext();
+		Info info = (Info) application.getAttribute("info");
+		ArrayList<String> rcList = new ArrayList<String>();
+		if (info.getAvailableRelatedContent() != null) {
+			for (int i = 0; i < info.getAvailableRelatedContent().size(); i++) {
+				AvailableRelatedContent currentRelatedContent = info
+						.getAvailableRelatedContent().get(i);
+				if (currentRelatedContent.getDefaultOn().equals("y")) {
+					rcList.add(currentRelatedContent.getType());
+				}
+			}
+			searchRequest.relatedContent = new String[rcList.size()];
+			searchRequest.relatedContent = rcList
+					.toArray(searchRequest.relatedContent);
 		}
 		// Get get values of parameters that there may be more than one of
 		searchRequest.actions = request

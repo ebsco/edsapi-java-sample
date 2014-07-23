@@ -23,6 +23,7 @@ public class Info {
 	private ArrayList<AvailableExpander> availableExpandersList;
 	private ArrayList<AvailableLimiter> availableLimitersList;
 	private ArrayList<AvailableSearchMode> availableSearchModeList;
+	private ArrayList<AvailableRelatedContent> availableRelatedContent;
 
 	private ApiErrorMessage errorMessage;
 
@@ -85,6 +86,14 @@ public class Info {
 	public void setAvailableSearchModeList(
 			ArrayList<AvailableSearchMode> availableSearchModeList) {
 		this.availableSearchModeList = availableSearchModeList;
+	}
+
+	public ArrayList<AvailableRelatedContent> getAvailableRelatedContent() {
+		return availableRelatedContent;
+	}
+
+	public void setAvailableRelatedContent(ArrayList<AvailableRelatedContent> availableRelatedContent) {
+		this.availableRelatedContent = availableRelatedContent;
 	}
 
 }

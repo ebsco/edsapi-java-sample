@@ -26,16 +26,16 @@
 		<!-- There are two message formats available, XML or JSON -->
 		<init-param>
 			<param-name>message_format</param-name>
-			<param-value>JSON</param-value>
-			<!-- <param-value>XML</param-value> -->
+			<!--	<param-value>JSON</param-value> -->
+		 <param-value>XML</param-value>
 		</init-param>
 		<init-param>
 			<param-name>edsapi_end_point</param-name>
-			<param-value>http://eds-api.ebscohost.com/EDSAPI/rest</param-value>
+			<param-value>http://eas-mmilton.epnet.com/EDSAPI/rest</param-value>
 		</init-param>
 		<init-param>
 			<param-name>profile</param-name>
-			<param-value>[INSERT_YOUR_PROFILE_HERE]</param-value>
+			<param-value>edsapi</param-value>
 		</init-param>
 		<!-- There are two types of authentication methods available in this demo, UID and IP. UID authentication
 		will require the use of authentication tokens, and IP authentication will authenticate each call without 
@@ -48,16 +48,16 @@
 		<!-- authentication end point is required for UID Authentication -->
 		<init-param>
 			<param-name>authentication_end_point</param-name>
-			<param-value>https://eds-api.ebscohost.com/Authservice/rest</param-value>
+			<param-value>http://eas-mmilton.epnet.com/Authservice/rest</param-value>
 		</init-param>
 		<!-- user name and password parameters are for UID authentication only -->
 		<init-param>
 			<param-name>user_name</param-name>
-			<param-value>[INSERT_YOUR_USERNAME_HERE]</param-value>
+			<param-value>demo</param-value>
 		</init-param>
 		<init-param>
 			<param-name>password</param-name>
-			<param-value>[INSERT_YOUR_PASSWORD_HERE]</param-value>
+			<param-value>dem0</param-value>
 		</init-param>
 	</servlet>
 	<servlet-mapping>

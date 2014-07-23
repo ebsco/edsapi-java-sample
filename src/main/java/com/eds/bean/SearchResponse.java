@@ -27,6 +27,7 @@ public class SearchResponse {
 	private ApiErrorMessage apierrormessage;
 	private ArrayList<Result> resultsList = new ArrayList<Result>();
 	private ArrayList<Facet> facetsList = new ArrayList<Facet>();
+	private ArrayList<Result> researchStartersList = new ArrayList<Result>();
 	private ArrayList<LimiterWithAction> selectedLimiterList = new ArrayList<LimiterWithAction>();
 	private ArrayList<ExpandersWithAction> expanderwithActionList = new ArrayList<ExpandersWithAction>();
 	private ArrayList<FacetFilterWithAction> facetfiltersList = new ArrayList<FacetFilterWithAction>();
@@ -136,5 +137,13 @@ public class SearchResponse {
 
 	public String getSelectedSort() {
 		return QueryStringParameterHelper.GetSort(this.queryString);
+	}
+
+	public ArrayList<Result> getRecordsList() {
+		return researchStartersList;
+	}
+
+	public void setRecordsList(ArrayList<Result> recordsList) {
+		this.researchStartersList = recordsList;
 	}
 }

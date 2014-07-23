@@ -27,5 +27,6 @@ public class QueryStringParameterNames {
 	public static String pageNumber = "pagenumber";
 	public static String highlight = "highlight";
 	public static String action = "action";
+	public static String relatedContent = "relatedcontent";
 
 }

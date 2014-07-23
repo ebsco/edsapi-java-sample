@@ -23,8 +23,11 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jdom2.Content;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -37,10 +40,12 @@ import com.eds.bean.ApiErrorMessage;
 import com.eds.bean.AuthToken;
 import com.eds.bean.AvailableExpander;
 import com.eds.bean.AvailableLimiter;
+import com.eds.bean.AvailableRelatedContent;
 import com.eds.bean.AvailableSearchField;
 import com.eds.bean.AvailableSearchMode;
 import com.eds.bean.AvailableSort;
 import com.eds.bean.BookJacket;
+import com.eds.bean.CoverArt;
 import com.eds.bean.CustomLink;
 import com.eds.bean.EachFacetValue;
 import com.eds.bean.ExpandersWithAction;
@@ -48,6 +53,9 @@ import com.eds.bean.Facet;
 import com.eds.bean.FacetFilterWithAction;
 import com.eds.bean.FacetValue;
 import com.eds.bean.FacetValueWithAction;
+import com.eds.bean.FullText;
+import com.eds.bean.Header;
+import com.eds.bean.ImageInfo;
 import com.eds.bean.Info;
 import com.eds.bean.Item;
 import com.eds.bean.LimiterValue;
@@ -60,6 +68,7 @@ import com.eds.bean.RetrieveResponse;
 import com.eds.bean.SearchResponse;
 import com.eds.bean.ServiceResponse;
 import com.eds.bean.SessionToken;
+import com.eds.bean.Text;
 import com.eds.bean.ViewResultSettings;
 
 public class XMLProcessor implements IMessageProcessor {
@@ -347,64 +356,71 @@ public class XMLProcessor implements IMessageProcessor {
 								.getChild("FacetFiltersWithAction",
 										searchCriteriaWithActions
 												.getNamespace());
-						if (facetFiltersWithAction != null) {
-							for (Element facetFilterWithActionXML : facetFiltersWithAction
-									.getChildren()) {
-								FacetFilterWithAction facetWithAction = new FacetFilterWithAction();
-
-								String filterId = facetFilterWithActionXML
-										.getChildText("FilterId",
-												facetFilterWithActionXML
-														.getNamespace());
-								String removeAction = facetFilterWithActionXML
-										.getChildText("RemoveAction",
-												facetFilterWithActionXML
-														.getNamespace());
-								facetWithAction.setFilterId(filterId);
-								facetWithAction.setRemoveAction(removeAction);
-
-								ArrayList<FacetValueWithAction> facetValuesWithActionList = new ArrayList<FacetValueWithAction>();
-								Element facetValuesWithAction = facetFilterWithActionXML
-										.getChild("FacetValuesWithAction",
-												facetFilterWithActionXML
-														.getNamespace());
-
-								for (Element facetValueWithAction : facetValuesWithAction
+						if (null != facetFiltersWithAction) {
+							if (facetFiltersWithAction != null) {
+								for (Element facetFilterWithActionXML : facetFiltersWithAction
 										.getChildren()) {
+									FacetFilterWithAction facetWithAction = new FacetFilterWithAction();
 
-									FacetValueWithAction fvwa = new FacetValueWithAction();
-									String eRemoveAction = facetValueWithAction
+									String filterId = facetFilterWithActionXML
+											.getChildText("FilterId",
+													facetFilterWithActionXML
+															.getNamespace());
+									String removeAction = facetFilterWithActionXML
 											.getChildText("RemoveAction",
-													facetValueWithAction
+													facetFilterWithActionXML
 															.getNamespace());
-									fvwa.setRemoveAction(eRemoveAction);
+									facetWithAction.setFilterId(filterId);
+									facetWithAction
+											.setRemoveAction(removeAction);
 
-									Element eFacetValue = facetValueWithAction
-											.getChild("FacetValue",
-													facetValueWithAction
+									ArrayList<FacetValueWithAction> facetValuesWithActionList = new ArrayList<FacetValueWithAction>();
+									Element facetValuesWithAction = facetFilterWithActionXML
+											.getChild("FacetValuesWithAction",
+													facetFilterWithActionXML
 															.getNamespace());
 
-									if (null != eFacetValue) {
-										EachFacetValue efv = new EachFacetValue();
-										String id = eFacetValue.getChildText(
-												"Id",
-												eFacetValue.getNamespace());
-										String value = eFacetValue
-												.getChildText("Value",
-														eFacetValue
+									for (Element facetValueWithAction : facetValuesWithAction
+											.getChildren()) {
+
+										FacetValueWithAction fvwa = new FacetValueWithAction();
+										String eRemoveAction = facetValueWithAction
+												.getChildText("RemoveAction",
+														facetValueWithAction
 																.getNamespace());
-										efv.setValue(value);
-										efv.setId(id);
-										fvwa.setEachfacetvalue(efv);
+										fvwa.setRemoveAction(eRemoveAction);
+
+										Element eFacetValue = facetValueWithAction
+												.getChild("FacetValue",
+														facetValueWithAction
+																.getNamespace());
+
+										if (null != eFacetValue) {
+											EachFacetValue efv = new EachFacetValue();
+											String id = eFacetValue
+													.getChildText(
+															"Id",
+															eFacetValue
+																	.getNamespace());
+											String value = eFacetValue
+													.getChildText(
+															"Value",
+															eFacetValue
+																	.getNamespace());
+											efv.setValue(value);
+											efv.setId(id);
+											fvwa.setEachfacetvalue(efv);
+										}
+										facetValuesWithActionList.add(fvwa);
 									}
-									facetValuesWithActionList.add(fvwa);
+									facetWithAction
+											.setFacetvaluewithaction(facetValuesWithActionList);
+									facetFiltersList.add(facetWithAction);
 								}
-								facetWithAction
-										.setFacetvaluewithaction(facetValuesWithActionList);
-								facetFiltersList.add(facetWithAction);
 							}
+							searchResponse
+									.setFacetfiltersList(facetFiltersList);
 						}
-						searchResponse.setFacetfiltersList(facetFiltersList);
 					}
 				}
 				// Process the search result returned in the response
@@ -495,7 +511,137 @@ public class XMLProcessor implements IMessageProcessor {
 							// --------end to handle resultsList
 						}
 					}
+					// Get ResearchStarter Placard Data
+					Element relatedContent = searchResult.getChild(
+							"RelatedContent", searchResult.getNamespace());
+					if (null != relatedContent) {
+						Element relatedRecords = relatedContent
+								.getChild("RelatedRecords",
+										relatedContent.getNamespace());
+						List<Element> relatedRecordsList = relatedRecords
+								.getChildren();
+						for (int e = 0; e < relatedRecordsList.size(); e++) {
+							Element currentRelatedRecord = (relatedRecordsList
+									.get(e));
+							if (currentRelatedRecord.getChildText("Type",
+									currentRelatedRecord.getNamespace())
+									.equals("rs")) {
+								List<Element> researchStarters = currentRelatedRecord
+										.getChildren("Records",
+												currentRelatedRecord
+														.getNamespace());
+								for (int i = 0; i < researchStarters.size(); i++) {
+									Element currentResearchStarter = researchStarters
+											.get(e);
+									List<Element> researchStartersRecords = currentResearchStarter
+											.getChildren("Record",
+													currentResearchStarter
+															.getNamespace());
+									ArrayList<Result> researchStarterRecordObjects = new ArrayList<Result>();
+									for (int q = 0; q < researchStartersRecords
+											.size(); q++) {
+										Element currentResearchStarterRecord = researchStartersRecords
+												.get(q);
+										Result aRecord = new Result();
+										// aRecord.setResultId(Integer.parseInt(currentResearchStarterRecord.getChildText("ResultId")));
+
+										Element header = currentResearchStarterRecord
+												.getChild("Header",
+														currentResearchStarterRecord
+																.getNamespace());
+										aRecord.setDbId(header.getChildText(
+												"DbId", header.getNamespace()));
+										aRecord.setDbLabel(header.getChildText(
+												"DbLabel",
+												header.getNamespace()));
+										aRecord.setAn(header.getChildText("An",
+												header.getNamespace()));
+										aRecord.setRelevancyScore(header.getChildText("RelevancyScore",
+										 header.getNamespace()));
+										aRecord.setPubTypeID(header
+												.getChildText("PubTypeId",
+														header.getNamespace()));
+
+										aRecord.setpLink(currentResearchStarterRecord
+												.getChildText("Plink"));
+										Element imageInfo = currentResearchStarterRecord
+												.getChild("ImageInfo",
+														currentResearchStarterRecord
+																.getNamespace());
+										if(null != imageInfo)
+										{
+										ImageInfo resultImageInfo = new ImageInfo();
+										Element coverArt = imageInfo.getChild(
+												"CoverArt",
+												imageInfo.getNamespace());
+										CoverArt resultCoverArt = new CoverArt();
+										resultCoverArt
+												.setSize(coverArt.getChildText(
+														"Size",
+														coverArt.getNamespace()));
+										resultCoverArt
+												.setTarget(coverArt
+														.getChildText(
+																"Target",
+																coverArt.getNamespace()));
+										resultImageInfo
+												.setCoverArt(resultCoverArt);
+										aRecord.setImageInfo(resultImageInfo);
+										}
+										Element itemElement = currentResearchStarterRecord
+												.getChild("Items",
+														currentResearchStarterRecord
+																.getNamespace());
+										List<Element> itemElementList = itemElement
+												.getChildren("Item",
+														itemElement
+																.getNamespace());
+										HashMap<String, Item> researchStarterItems = new HashMap<String, Item>();
+										for (int z = 0; z < itemElementList
+												.size(); z++) {
+											Element currentItemElement = itemElementList
+													.get(z);
+											Item aResearchItem = new Item();
+											aResearchItem
+													.setLabel(currentItemElement
+															.getChildText(
+																	"Label",
+																	currentItemElement
+																			.getNamespace()));
+											aResearchItem
+													.setGroup(currentItemElement
+															.getChildText(
+																	"Group",
+																	currentItemElement
+																			.getNamespace()));
+											aResearchItem
+													.setData(currentItemElement
+															.getChildText(
+																	"Data",
+																	currentItemElement
+																			.getNamespace()));
+											researchStarterItems
+													.put(currentItemElement
+															.getChildText(
+																	"Name",
+																	currentItemElement
+																			.getNamespace()),
+															aResearchItem);
+										}
+										aRecord.setItemsMap(researchStarterItems);
+										researchStarterRecordObjects
+												.add(aRecord);
+									}
+
+									searchResponse
+											.setRecordsList(researchStarterRecordObjects);
+
+								}
+							}
+						}
+					}
 				}
+
 			} catch (Exception e) {
 				ApiErrorMessage errorMessage = new ApiErrorMessage();
 				errorMessage
@@ -555,7 +701,7 @@ public class XMLProcessor implements IMessageProcessor {
 				Element xmlRecord = retrieveResponseMessage.getChild("Record",
 						retrieveResponseMessage.getNamespace());
 
-				Result result = this.constructRecord(xmlRecord, true);
+				Result result = this.constructRecord(xmlRecord, false);
 				retrieveResponse.setRecord(result);
 
 			} catch (Exception e) {
@@ -675,7 +821,39 @@ public class XMLProcessor implements IMessageProcessor {
 						}
 					}
 					info.setAvailableExpandersList(expandersList);
+					//Process Related Content
+					
+					ArrayList<AvailableRelatedContent> relatedContentList = new ArrayList<AvailableRelatedContent>();
+					Element availableRelatedContent = availableSearchCriteria
+							.getChild("AvailableRelatedContent",
+									availableSearchCriteria.getNamespace());
+					if (null != availableRelatedContent) {
+						List<Element> availableRelatedContentList = availableRelatedContent
+								.getChildren();
+						for (int m = 0; m < availableRelatedContentList.size(); m++) {
 
+							Element elementAvailableRelatedContent = (Element) availableRelatedContentList
+									.get(m);
+							AvailableRelatedContent aRC = new AvailableRelatedContent();
+							String type = elementAvailableRelatedContent.getChildText("Type",
+									elementAvailableRelatedContent.getNamespace());
+							String label = elementAvailableRelatedContent.getChildText("Label",
+									elementAvailableRelatedContent.getNamespace());
+							String defaultOn = elementAvailableRelatedContent.getChildText("DefaultOn",
+									elementAvailableRelatedContent.getNamespace());
+							String addAction = elementAvailableRelatedContent.getChildText("AddAction",
+									elementAvailableRelatedContent.getNamespace());
+							aRC.setType(type);
+							aRC.setLabel(label);
+							aRC.setDefaultOn(defaultOn);
+							aRC.setAddAction(addAction);
+							relatedContentList.add(aRC);
+						}
+					}
+					info.setAvailableRelatedContent(relatedContentList);
+					
+					
+					
 					// process available limiters
 					ArrayList<AvailableLimiter> limitersList = new ArrayList<AvailableLimiter>();
 					Element availableLimiters = availableSearchCriteria
@@ -963,12 +1141,14 @@ public class XMLProcessor implements IMessageProcessor {
 					header.getNamespace());
 			String pubTypeId = header.getChildText("PubTypeId",
 					header.getNamespace());
-
+			String relevancyScore = header.getChildText("RelevancyScore",
+					header.getNamespace());
 			result.setDbId(dbId);
 			result.setDbLabel(dbLabel);
 			result.setPubTypeID(pubTypeId);
 			result.setAn(an);
 			result.setPubType(pubType);
+			result.setRelevancyScore(relevancyScore);
 		}
 		// Get PLink
 		String pLink = xmlRecord
@@ -1052,6 +1232,9 @@ public class XMLProcessor implements IMessageProcessor {
 						// translate data to valid HTML tags
 						htmlFullTextValue = TransDataToHTML
 								.transDataToHTML(htmlFullTextValue);
+						// htmlFullTextValue =
+						// StringEscapeUtils.escapeHtml(htmlFullTextValue);
+
 					}
 					result.setHtmlFullText(htmlFullTextValue);
 				}

@@ -29,6 +29,7 @@ public class SearchRequest {
 	public String pageNumber;
 	public String highlight;
 	public String[] actions;
+	public String[] relatedContent;
 
 	/**
 	 * Takes the properties of this class and turns them into a map of
@@ -83,7 +84,10 @@ public class SearchRequest {
 
 		if (null != actions && (0 < actions.length))
 			parameters.put(QueryStringParameterNames.action, actions);
-
+		
+		if( null != relatedContent && (0 < relatedContent.length))
+			parameters.put(QueryStringParameterNames.relatedContent,  relatedContent );
+		
 		return parameters;
 	}
 }

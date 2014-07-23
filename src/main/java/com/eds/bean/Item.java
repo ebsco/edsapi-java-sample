@@ -13,8 +13,11 @@
  */
 package com.eds.bean;
 
-public class Item {
+import org.jsoup.Jsoup;
 
+import com.eds.Helpers.TransDataToHTML;
+
+public class Item {
 	private String label;
 	private String group;
 	private String data;
@@ -40,7 +43,11 @@ public class Item {
 	}
 
 	public void setData(String data) {
+		data = Jsoup.parse(data).text().toString();
+		data = TransDataToHTML.transDataToHTML(data);
 		this.data = data;
 	}
+
+
 
 }
