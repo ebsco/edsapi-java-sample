@@ -12,10 +12,6 @@
 <%@page import="java.net.URLDecoder"%>
 <%@page import="java.util.HashMap"%>
 
-
-
- 
-
 <html>
 <head>
 <link rel="stylesheet" href="style/style.css" type="text/css"
@@ -109,23 +105,35 @@
 		 ArrayList<AvailableExpander> availableExpanderList = new ArrayList<AvailableExpander>();
 		 ArrayList<AvailableSort> availableSortList = new ArrayList<AvailableSort>();
 		 int researchStarters = 3; 
-		%>
 
-		<div class="header">
+		%>
+<div class="header">
+		<form  id = "login" name= "login" action="login.jsp" method="post" >
+			<input value=<%=request.getAttribute("url")%> name="hiddenURL" type="text" style="display:none">
+			</form>
+			
 			<div>
 				<a href="index.jsp" id="logo"></a>
 			</div>
 			<div class="guestbox">
+			<%boolean loggedOut = (null == session.getAttribute("userId")||session.getAttribute("userId").equals("invalid"));%>
 				<div>
-					Hello, Guest. <a href="login.jsp">Login</a> for full
-					access.
+				
+					<%if(loggedOut){%>Hello, Guest. <a href="#" onclick="document.login.submit()">Login</a> for full
+					access. <%}else{%>Welcome back, <% out.println(session.getAttribute("userId"));}%>
 				</div>
 			</div>
+			<%if(loggedOut){ %>
 			<div class="login">
-				<a href="login.jsp">Login</a>
+				<a href="#" onclick="document.login.submit()">Login</a>
 			</div>
-
+			<%}else{ %>
+			<div class="logout">
+				<a href="logout">Logout</a>
+			</div>
+			<%}%>
 		</div>
+
 		<div class="content">
 			<div id="toptabcontent">
 				<div class="topSearchBox">
@@ -544,6 +552,7 @@
 										researchStarters = resultList.getRecordsList().size();
 									}
 									for(int i =0; i <researchStarters; i++){
+									Result currentResearchStarter =resultList.getRecordsList().get(i);
 								%>
 
 								<div data-placard="<%query.toString();%>"
@@ -555,11 +564,11 @@
 										%>
 										<div class="placard-img">
 											<a
-												href="<%String picUrl = "Retrieve?dbid=" + resultList.getRecordsList().get(i).getDbId() + "&an=" + resultList.getRecordsList().get(i).getAn() + "&highlight=" + query.getTerm();
+												href="<%String picUrl = "Retrieve?dbid=" + currentResearchStarter.getDbId() + "&an=" + currentResearchStarter.getAn() + "&highlight=" + query.getTerm();
 													out.println(picUrl);%>"
-												title="IMAGE" id="PlacardImage1_ers" class="clearfix"><img
+												title="Research Starter Image" id="PlacardImage1_ers" class="clearfix"><img
 												alt="IMAGE"
-												src="<%out.println(resultList.getRecordsList().get(i).getImageInfo().getCoverArt().getTarget());%>"></a>
+												src="<%out.println(currentResearchStarter.getImageInfo().getCoverArt().getTarget());%>"></a>
 										</div>
 										<%
 											}
@@ -572,18 +581,21 @@
 											<h3 class="placard-title evt-truncate truncate"
 												style="width: 1113px;">
 												<a
-													href="<%String picUrl = "Retrieve?dbid=" + resultList.getRecordsList().get(i).getDbId() + "&an=" + resultList.getRecordsList().get(i).getAn() + "&highlight=" + query.getTerm(); out.println(picUrl);%>"
-													title="Frog." id="PlacardTitle1_ers"
+													href="<%String picUrl = "Retrieve?dbid=" + currentResearchStarter.getDbId() + "&an=" + currentResearchStarter.getAn() + "&highlight=" + query.getTerm(); out.println(picUrl);%>"
+													title="Research Starter" id="PlacardTitle1_ers"
 													class="color-p4 title-link"><strong>
-														<%
-															out.println((resultList.getRecordsList().get(i).getItemsMap().get("Title").getData()));
+														<%if(null!= currentResearchStarter.getItemsMap().get("Title"))
+															out.println((currentResearchStarter.getItemsMap().get("Title").getData()));
+														
 														%>
 												</strong></a>
 											</h3>
 
 											<p class="placard-abstract">
 												<%
-													out.println(resultList.getRecordsList().get(i).getItemsMap().get("Abstract").getData());
+													out.println(currentResearchStarter.getItemsMap().get("Abstract").getData());
+												if(null!= currentResearchStarter.getItemsMap().get("Title"))
+														{
 												%>
 												<a href="<%out.println(picUrl);%>" title="More"
 													id="PlacardAbstract1_ers" class="more-link"><strong>More</strong></a>
@@ -591,7 +603,10 @@
 
 											<p class="placard-source">
 												<%
-													out.println(resultList.getRecordsList().get(i).getItemsMap().get("TitleSource").getData());
+														}
+												if(null!= currentResearchStarter.getItemsMap().get("TitleSource"))
+													out.println((currentResearchStarter.getItemsMap().get("TitleSource").getData()));
+										
 												%>
 											</p>
 
@@ -750,7 +765,7 @@
 												}
 											%>
 											<a>Relevancy:</a>
-											<meter value = "<%=result.getRelevancyScore()%>" min = "0" max="3000" low = "1300" high="1800" optimum="2000" ></meter>
+											<meter value = "<%=result.getRelevancyScore()%>" min = "0" max="28d00" low = "1300" high="1800" optimum="2000" ></meter>
 											<div class="links">
 												<%
 													if(null != result.getHtmlAvailable() && result.getHtmlAvailable().equalsIgnoreCase("1")){

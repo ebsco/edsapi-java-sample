@@ -135,7 +135,7 @@ public class initApp extends HttpServlet {
 						.getAuthenticationManager(request.getServletContext());
 				EDSAPI edsapi = new EDSAPI(edsapi_end_point, message_format,
 						authManager, "");
-				SessionToken sessionToken = edsapi.createSession(profile);
+				SessionToken sessionToken = edsapi.createSession(profile, "y");
 				// display error page.
 				if (null == sessionToken) {
 					errorMessage = new ApiErrorMessage();
@@ -147,6 +147,7 @@ public class initApp extends HttpServlet {
 					edsapi.setSessionToken(sessionToken.getSessionToken());
 					Map<String, String[]> parameters = new HashMap<String, String[]>();
 					parameters.put("profile", new String[] { profile });
+					parameters.put("guest", new String[] { "y" });
 					Info info = edsapi.requestInfo(parameters);
 					if (null == info) {
 						errorMessage = new ApiErrorMessage();
@@ -193,5 +194,7 @@ public class initApp extends HttpServlet {
 			HttpServletResponse response) throws ServletException, IOException {
 		doGet(request, response);
 	}
+	
+	
 
 }

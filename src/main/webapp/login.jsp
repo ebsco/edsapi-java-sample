@@ -22,35 +22,51 @@ $(document).ready(function() {
 
 <body>
 	<div class="container">
-		<div class="header">
+			<div class="header">
+		<form  id = "login" name= "login" action="login.jsp" method="post" >
+			<input value=<%=request.getRequestURL().toString()%> name="hiddenURL" type="text" style="display:none">
+			</form>
 			<div>
 				<a href="index.jsp" id="logo"></a>
 			</div>
 			<div class="guestbox">
+			<%boolean loggedOut = (null == session.getAttribute("userId")||session.getAttribute("userId").equals("invalid"));%>
 				<div>
-					Hello, Guest. <a href="login.jsp">Login</a> for full
-					access.
+				
+					<%if(loggedOut){%>Hello, Guest. <a href="#" onclick="document.login.submit()">Login</a> for full
+					access. <%}else{%>Welcome back, <% out.println(session.getAttribute("userId"));} %>
 				</div>
+				
 			</div>
+			<%if(loggedOut){ %>
 			<div class="login">
-				<a href="login.jsp">Login</a>
+				<a href="#" onclick="document.login.submit()">Login</a>
 			</div>
-
+			<%}else{ %>
+			<div class="logout">
+				<a href="logout">Logout</a>
+			</div>
+			<%}%>
 		</div>
+
 
 
 		<div class="content">
 			<div class="clearfix" id="toptabcontent">
 				<div class="loginform">
 					<h2 style="font-size:">Login</h2>
+					<% if(null!= session.getAttribute("userId")&& session.getAttribute("userId").equals("invalid")){ %>
 					<div class="loginfailed">Invalid login -- please try again</div>
-					<form method="post" action="auth.php">
+					<%session.setAttribute("userId",null);} %>
+					<form action="CheckLogin" method = "get" >
 						<table>
 							<tbody>
 								<tr>
 									<td><label style="font-size: 80%"><b>Username:</b>
 									</label></td>
 									<td><input value="" name="userId" type="text"></td>
+						
+									
 								</tr>
 								<tr>
 									<td><label style="font-size: 80%"><b>Password:</b>
@@ -59,7 +75,8 @@ $(document).ready(function() {
 								</tr>
 								<tr>
 									<td></td>
-									<td><input id= "subButton" type="submit" value="Login"></td>
+											<td><input value=<%=request.getParameter("hiddenURL")%> name="hiddenURL" type="text" style="display:none"></td>
+									<td><input type="submit" value="Login"></td>
 								</tr>
 							</tbody>
 						</table>

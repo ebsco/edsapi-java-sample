@@ -26,8 +26,8 @@ id="WebApp_ID" version="3.0">
 <!-- There are two message formats available, XML or JSON -->
 <init-param>
 <param-name>message_format</param-name>
-<!-- <param-value>JSON</param-value> -->
-<param-value>XML</param-value>
+<param-value>JSON</param-value> 
+<!-- <param-value>XML</param-value>-->
 </init-param>
 <init-param>
 <param-name>edsapi_end_point</param-name>
@@ -53,11 +53,11 @@ the use of tokens.-->
 <!-- user name and password parameters are for UID authentication only -->
 <init-param>
 <param-name>user_name</param-name>
-<param-value>demo</param-value>
+<param-value>edsdemo</param-value>
 </init-param>
 <init-param>
 <param-name>password</param-name>
-<param-value>dem0</param-value>
+<param-value>academic</param-value>
 </init-param>
 </servlet>
 <servlet-mapping>
@@ -71,6 +71,24 @@ the use of tokens.-->
 <servlet-mapping>
 <servlet-name>Search</servlet-name>
 <url-pattern>/Search/*</url-pattern>
+</servlet-mapping>
+<servlet>
+
+<servlet-name>CheckLogin</servlet-name>
+<servlet-class>com.eds.servlets.CheckLogin</servlet-class>
+</servlet>
+<servlet-mapping>
+<servlet-name>CheckLogin</servlet-name>
+<url-pattern>/CheckLogin</url-pattern>
+</servlet-mapping>
+
+<servlet>
+<servlet-name>Logout</servlet-name>
+<servlet-class>com.eds.servlets.Logout</servlet-class>
+</servlet>
+<servlet-mapping>
+<servlet-name>Logout</servlet-name>
+<url-pattern>/Logout</url-pattern>
 </servlet-mapping>
 
 

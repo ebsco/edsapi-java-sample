@@ -29,6 +29,10 @@
 			source : obj
 		});
 	}
+	
+
+
+
 </script>
 <%
 	String url = "http://ehis.ebscohost.com/eds/autosuggest?iid=eds&iver=live&numterms=10&userinput=";
@@ -38,19 +42,31 @@
 <body>
 	<div class="container">
 		<div class="header">
+			<form id="login" name="login" action="login.jsp" method="post">
+				<input value=<%=request.getRequestURL().toString()%> name="hiddenURL"
+					type="text" style="display: none">
+			</form>
 			<div>
 				<a href="index.jsp" id="logo"></a>
 			</div>
 			<div class="guestbox">
+			<%boolean loggedOut = (null == session.getAttribute("userId")||session.getAttribute("userId").equals("invalid"));%>
 				<div>
-					Hello, Guest. <a href="login.jsp">Login</a> for full
-					access.
+				
+					<%if(loggedOut){%>Hello, Guest. <a href="#" onclick="document.login.submit()">Login</a> for full
+					access. <%}else{%>Welcome back, <% out.println(session.getAttribute("userId"));} %>
 				</div>
+				
 			</div>
+			<%if(loggedOut){ %>
 			<div class="login">
-				<a href="login.jsp">Login</a>
+				<a href="#" onclick="document.login.submit()">Login</a>
 			</div>
-
+			<%}else{ %>
+			<div class="logout">
+				<a href="logout">Logout</a>
+			</div>
+			<%}%>
 		</div>
 
 

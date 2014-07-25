@@ -120,13 +120,13 @@ body {
 	font-size: 80%;
 }
 
-.login {
+.login, .logout {
 	font-family: Arial;
 	float: right;
 	position: relative;
 }
 
-.login a:hover {
+.login a:hover, .logout a:hover {
 	color: lightsteelblue
 }
 
@@ -689,7 +689,7 @@ ul.filters {
 }
 
 .back {
-	color: #ffffff;
+	color: #FFF;
 	margin-left: 15px;
 }
 

@@ -49,7 +49,7 @@ public class AdvancedSearch extends HttpServlet {
 	 * @param request
 	 *            the servlet request
 	 * @param response
-	 *            the servlet respones
+	 *            the servlet response
 	 */
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
@@ -88,7 +88,7 @@ public class AdvancedSearch extends HttpServlet {
 			if (null == sessionToken || sessionToken.isEmpty()) {
 				String profile = (String) request.getServletContext()
 						.getAttribute("profile");
-				SessionToken token = api.createSession(profile);
+				SessionToken token = api.createSession(profile, "y");
 				if (null != token && null != token.getSessionToken()
 						&& !token.getSessionToken().isEmpty()) {
 					request.getSession().setAttribute("session_token",
@@ -113,7 +113,7 @@ public class AdvancedSearch extends HttpServlet {
 				case 109: // session token invalid
 					String profile = (String) request.getServletContext()
 							.getAttribute("profile");
-					SessionToken token = api.createSession(profile);
+					SessionToken token = api.createSession(profile, "y");
 					if (null != token && null != token.getSessionToken()
 							&& !token.getSessionToken().isEmpty()) {
 						request.getSession().setAttribute("session_token",
@@ -144,6 +144,9 @@ public class AdvancedSearch extends HttpServlet {
 			request.getSession().setAttribute("errorMessage", errorMessage);
 		}
 		RequestDispatcher dispatcher = request.getRequestDispatcher(page);
+		String thisUrl = request.getRequestURL() + "?" + request.getQueryString();
+		request.setAttribute("url", thisUrl);
+		session.setAttribute("resultListUrl", thisUrl);
 		dispatcher.forward(request, response);
 	}
 

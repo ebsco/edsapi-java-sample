@@ -26,8 +26,8 @@
 		<!-- There are two message formats available, XML or JSON -->
 		<init-param>
 			<param-name>message_format</param-name>
-			<!--	<param-value>JSON</param-value> -->
-		 <param-value>XML</param-value>
+		<param-value>JSON</param-value>
+			<!--	 <param-value>XML</param-value> -->
 		</init-param>
 		<init-param>
 			<param-name>edsapi_end_point</param-name>

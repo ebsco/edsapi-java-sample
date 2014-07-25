@@ -80,7 +80,7 @@ public class Retrieve extends HttpServlet {
 		// Generate an eds api object from the above settings
 		EDSAPI api = new EDSAPI(edsapi_end_point, message_format, authManager,
 				sessionToken);
-
+		request.setAttribute("url", request.getRequestURL() + "?" + request.getQueryString());
 		try {
 			// call the EDS API Retrieve method
 			record = api.requestRetrieve(parameters);
@@ -99,7 +99,7 @@ public class Retrieve extends HttpServlet {
 					// search
 					String profile = (String) request.getServletContext()
 							.getAttribute("profile");
-					SessionToken token = api.createSession(profile);
+					SessionToken token = api.createSession(profile, "y");
 					if (null != token && !token.getSessionToken().isEmpty()) {
 						request.getSession().setAttribute("session_token",
 								token.getSessionToken());

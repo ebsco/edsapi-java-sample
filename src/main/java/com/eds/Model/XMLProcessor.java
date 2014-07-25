@@ -25,16 +25,12 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
 import org.jdom2.Content;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.input.SAXBuilder;
 import org.jsoup.Jsoup;
 import org.xml.sax.InputSource;
-
 import com.eds.Helpers.TransDataToHTML;
 import com.eds.bean.ApiErrorMessage;
 import com.eds.bean.AuthToken;
@@ -53,8 +49,6 @@ import com.eds.bean.Facet;
 import com.eds.bean.FacetFilterWithAction;
 import com.eds.bean.FacetValue;
 import com.eds.bean.FacetValueWithAction;
-import com.eds.bean.FullText;
-import com.eds.bean.Header;
 import com.eds.bean.ImageInfo;
 import com.eds.bean.Info;
 import com.eds.bean.Item;
@@ -68,7 +62,6 @@ import com.eds.bean.RetrieveResponse;
 import com.eds.bean.SearchResponse;
 import com.eds.bean.ServiceResponse;
 import com.eds.bean.SessionToken;
-import com.eds.bean.Text;
 import com.eds.bean.ViewResultSettings;
 
 public class XMLProcessor implements IMessageProcessor {

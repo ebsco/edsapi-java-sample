@@ -10,7 +10,8 @@
 
 <% RetrieveResponse retrieveResponse = (RetrieveResponse)request.getSession().getAttribute("record");
    Result record = retrieveResponse.getResult();
-   String picurl=""; %>
+   String picurl=""; 
+   %>
 
 <link rel="stylesheet" href="style/style.css" type="text/css"
 	media="screen" />
@@ -18,26 +19,38 @@
 </head>
 <body>
 	<div class="container">
-		<div class="header">
+			<div class="header">
+		<form  id = "login" name= "login" action="login.jsp" method="post" >
+			<input value=<%=request.getAttribute("url")%> name="hiddenURL" type="text" style="display:none">
+			</form>
 			<div>
 				<a href="index.jsp" id="logo"></a>
 			</div>
 			<div class="guestbox">
+			<%boolean loggedOut = (null == session.getAttribute("userId")||session.getAttribute("userId").equals("invalid"));%>
 				<div>
-					Hello, Guest. <a href="login.jsp">Login</a> for full
-					access.
+				
+					<%if(loggedOut){%>Hello, Guest. <a href="#" onclick="document.login.submit()">Login</a> for full
+					access. <%}else{%>Welcome back, <% out.println(session.getAttribute("userId"));} %>
 				</div>
+				
 			</div>
+			<%if(loggedOut){ %>
 			<div class="login">
-				<a href="login.jsp">Login</a>
+				<a href="#" onclick="document.login.submit()">Login</a>
 			</div>
-
+			<%}else{ %>
+			<div class="logout">
+				<a href="logout">Logout</a>
+			</div>
+			<%}%>
 		</div>
+
 		<div class="content">
 			<div class="toptabcontent">
 				<div class="topbar">
 					<div style="padding-top: 6px; float: left">
-						<a href="javascript:history.back();" class="back">
+						<a href=<%=session.getAttribute("resultListUrl")%> style="color: #FFF" class="back">
 							<%out.println("<< Results List");%>
 						</a>
 					</div>

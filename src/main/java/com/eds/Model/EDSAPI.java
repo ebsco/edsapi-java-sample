@@ -89,6 +89,16 @@ public class EDSAPI {
 				parameters, messageProcessor, authenticationManager);
 		return messageProcessor.ProcessCreateSessionResponse(response);
 	}
+	
+	public SessionToken createSession(String profile, String guest) throws IOException {
+		String url = end_point + "/CreateSession";
+		Map<String, String[]> parameters = new HashMap<String, String[]>();
+		parameters.put("profile", new String[] { profile });
+		parameters.put("guest", new String[] { guest });
+		ServiceResponse response = ServiceRequestProcessor.Get(url, null,
+				parameters, messageProcessor, authenticationManager);
+		return messageProcessor.ProcessCreateSessionResponse(response);
+	}
 
 	/**
 	 * Constructs an EDS API EndSession request, executes the request, processes
