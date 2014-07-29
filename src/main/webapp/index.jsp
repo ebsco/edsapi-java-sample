@@ -11,33 +11,7 @@
 <script src="http://code.jquery.com/ui/1.9.0/jquery-ui.js"></script>
 <link rel="stylesheet" href="style/pubtype-icons.css" type="text/css"
 	media="screen" />
-<script>
-	$(document).ready(function() {
-		$("#query").keyup(function() {
 
-		});
-		$("#query").autocomplete({
-			source : getJson,
-			minTerms : 1
-		});
-
-	});
-	function getJson() {
-		var data = $("#info").html();
-		var obj = eval(JSON.parse(data));
-		$('#query').autocomplete("option", {
-			source : obj
-		});
-	}
-	
-
-
-
-</script>
-<%
-	String url = "http://ehis.ebscohost.com/eds/autosuggest?iid=eds&iver=live&numterms=10&userinput=";
-	String input = "a";
-%>
 </head>
 <body>
 	<div class="container">
@@ -72,8 +46,7 @@
 
 
 
-		<div style="display: none" id="info">
-			<%=JsonHelper.readJsonFromUrl(url + input)%></div>
+	
 		<div class="content">
 			<div id="toptabcontent">
 				<div class="topSearchBox">

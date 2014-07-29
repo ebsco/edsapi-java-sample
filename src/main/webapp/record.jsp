@@ -49,11 +49,19 @@
 		<div class="content">
 			<div class="toptabcontent">
 				<div class="topbar">
+				<% if(null!=session.getAttribute("resultListUrl")){%>
 					<div style="padding-top: 6px; float: left">
 						<a href=<%=session.getAttribute("resultListUrl")%> style="color: #FFF" class="back">
 							<%out.println("<< Results List");%>
 						</a>
 					</div>
+				<%}else{ %>
+				<div style="padding-top: 6px; float: left">
+						<a href="index.jsp" style="color: #FFF" class="back">
+							<%out.println("<< Results List");%>
+						</a>
+					</div>
+					<%}%>
 				</div>
 
 				<div class="record table">

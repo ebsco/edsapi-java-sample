@@ -88,7 +88,12 @@ public class AdvancedSearch extends HttpServlet {
 			if (null == sessionToken || sessionToken.isEmpty()) {
 				String profile = (String) request.getServletContext()
 						.getAttribute("profile");
-				SessionToken token = api.createSession(profile, "y");
+				String isGuest ="n";
+				if(null == session.getAttribute("userId")|| session.getAttribute("userId")!= application.getAttribute("user_name"))
+					isGuest = "y";
+				SessionToken token = api.createSession(profile, isGuest);
+				request.getSession().setAttribute("session_token",
+						token.getSessionToken());
 				if (null != token && null != token.getSessionToken()
 						&& !token.getSessionToken().isEmpty()) {
 					request.getSession().setAttribute("session_token",
@@ -113,7 +118,12 @@ public class AdvancedSearch extends HttpServlet {
 				case 109: // session token invalid
 					String profile = (String) request.getServletContext()
 							.getAttribute("profile");
-					SessionToken token = api.createSession(profile, "y");
+					String isGuest ="n";
+					if(null == session.getAttribute("userId")|| !session.getAttribute("userId").equals(application.getAttribute("user_name")))
+						isGuest = "y";
+					SessionToken token = api.createSession(profile, isGuest);
+					request.getSession().setAttribute("session_token",
+							token.getSessionToken());
 					if (null != token && null != token.getSessionToken()
 							&& !token.getSessionToken().isEmpty()) {
 						request.getSession().setAttribute("session_token",
@@ -144,9 +154,14 @@ public class AdvancedSearch extends HttpServlet {
 			request.getSession().setAttribute("errorMessage", errorMessage);
 		}
 		RequestDispatcher dispatcher = request.getRequestDispatcher(page);
+		//Save URL to return after login
 		String thisUrl = request.getRequestURL() + "?" + request.getQueryString();
 		request.setAttribute("url", thisUrl);
+		//This helps if there is a failed login attempt
+		session.setAttribute("lastPageVisited", thisUrl);
+		//This is for our back to result list button on the record page
 		session.setAttribute("resultListUrl", thisUrl);
+
 		dispatcher.forward(request, response);
 	}
 

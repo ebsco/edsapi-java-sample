@@ -102,8 +102,11 @@ public class Logout extends HttpServlet {
 			// Generate an eds api object from the above settings
 			EDSAPI api = new EDSAPI(edsapi_end_point, message_format,
 					authManager, null);
+			//Generate Session as Guest
 			SessionToken sessionToken = api.createSession(profile, "y");
 			session.setAttribute("session_token", sessionToken.getSessionToken());
+			//Remove history of last page visited
+			session.setAttribute("lastPageVisited", null);
 			response.sendRedirect("index.jsp");
 			}catch (Exception e) {
 				errorMessage = new ApiErrorMessage();

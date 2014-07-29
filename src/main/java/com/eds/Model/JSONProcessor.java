@@ -323,76 +323,74 @@ public class JSONProcessor implements IMessageProcessor {
 				for (int i = 0; i < relatedRecords.length(); i++) {
 					JSONObject currentRelatedRecord = relatedRecords
 							.getJSONObject(i);
-					if (currentRelatedRecord.getString("Type").equals("rs")) {
-						JSONArray researchStarters = currentRelatedRecord
-								.getJSONArray("Records");
 
-						for (int e = 0; e < researchStarters.length(); e++) {
-							JSONObject currentResearchStarter = researchStarters
-									.getJSONObject(e);
-							Result aRecord = new Result();
-							aRecord.setResultId(currentResearchStarter
-									.getString("ResultId"));
-							JSONObject JSONheader = currentResearchStarter
-									.getJSONObject("Header");
-							aRecord.setDbId(JSONheader.getString("DbId"));
-							aRecord.setDbLabel(JSONheader.getString("DbLabel"));
-							aRecord.setAn(JSONheader.getString("An"));
-							aRecord.setRelevancyScore(JSONheader
-									.optString("RelevancyScore"));
-							aRecord.setPubTypeID(JSONheader
-									.getString("PubTypeId"));
-							aRecord.setpLink(currentResearchStarter
-									.getString("PLink"));
-							if (!currentResearchStarter.isNull("ImageInfo")
-									&& currentResearchStarter.has("ImageInfo")) {
-								JSONArray JSONImageInfo = currentResearchStarter
-										.getJSONArray("ImageInfo");
-								ImageInfo imageInfo = new ImageInfo();
-								for (int q = 0; q < JSONImageInfo.length(); q++) {
-									JSONObject currentImageInfo = JSONImageInfo
-											.getJSONObject(q);
-									CoverArt coverArt = new CoverArt();
-									coverArt.setSize(currentImageInfo
-											.getString("Size"));
-									coverArt.setTarget(currentImageInfo
-											.getString("Target"));
-									imageInfo.setCoverArt(coverArt);
-								}
-								aRecord.setImageInfo(imageInfo);
+					JSONArray researchStarters = currentRelatedRecord
+							.getJSONArray("Records");
+
+					for (int e = 0; e < researchStarters.length(); e++) {
+						JSONObject currentResearchStarter = researchStarters
+								.getJSONObject(e);
+						Result aRecord = new Result();
+						aRecord.setResultId(currentResearchStarter
+								.getString("ResultId"));
+						JSONObject JSONheader = currentResearchStarter
+								.getJSONObject("Header");
+						aRecord.setDbId(JSONheader.getString("DbId"));
+						aRecord.setDbLabel(JSONheader.getString("DbLabel"));
+						aRecord.setAn(JSONheader.getString("An"));
+						aRecord.setRelevancyScore(JSONheader
+								.optString("RelevancyScore"));
+						aRecord.setPubTypeID(JSONheader.getString("PubTypeId"));
+						aRecord.setpLink(currentResearchStarter
+								.getString("PLink"));
+						if (!currentResearchStarter.isNull("ImageInfo")
+								&& currentResearchStarter.has("ImageInfo")) {
+							JSONArray JSONImageInfo = currentResearchStarter
+									.getJSONArray("ImageInfo");
+							ImageInfo imageInfo = new ImageInfo();
+							for (int q = 0; q < JSONImageInfo.length(); q++) {
+								JSONObject currentImageInfo = JSONImageInfo
+										.getJSONObject(q);
+								CoverArt coverArt = new CoverArt();
+								coverArt.setSize(currentImageInfo
+										.getString("Size"));
+								coverArt.setTarget(currentImageInfo
+										.getString("Target"));
+								imageInfo.setCoverArt(coverArt);
 							}
-							JSONObject JSONFullText = currentResearchStarter
-									.getJSONObject("FullText");
-
-							JSONObject JSONText = JSONFullText
-									.getJSONObject("Text");
-
-							aRecord.setHtmlAvailable(JSONText
-									.getString("Availability"));
-
-							JSONArray JSONItems = currentResearchStarter
-									.getJSONArray("Items");
-							HashMap<String, Item> itemsMap = new HashMap<String, Item>();
-							for (int z = 0; z < JSONItems.length(); z++) {
-								JSONObject currentJSONItem = JSONItems
-										.getJSONObject(z);
-								Item currentItem = new Item();
-								currentItem.setLabel(currentJSONItem
-										.getString("Label"));
-								currentItem.setGroup(currentJSONItem
-										.getString("Group"));
-								currentItem.setData(currentJSONItem
-										.getString("Data"));
-
-								itemsMap.put(currentJSONItem.getString("Name"),
-										currentItem);
-							}
-							aRecord.setItemsMap(itemsMap);
-							researchStarterRecords.add(aRecord);
+							aRecord.setImageInfo(imageInfo);
 						}
-						searchResponse.setRecordsList(researchStarterRecords);
+						JSONObject JSONFullText = currentResearchStarter
+								.getJSONObject("FullText");
 
+						JSONObject JSONText = JSONFullText
+								.getJSONObject("Text");
+
+						aRecord.setHtmlAvailable(JSONText
+								.getString("Availability"));
+
+						JSONArray JSONItems = currentResearchStarter
+								.getJSONArray("Items");
+						ArrayList<Item> itemsList = new ArrayList< Item>();
+						for (int z = 0; z < JSONItems.length(); z++) {
+							JSONObject currentJSONItem = JSONItems
+									.getJSONObject(z);
+							Item currentItem = new Item();
+							currentItem.setLabel(currentJSONItem
+									.getString("Label"));
+							currentItem.setGroup(currentJSONItem
+									.getString("Group"));
+							currentItem.setData(currentJSONItem
+									.getString("Data"));
+
+							itemsList.add(
+									currentItem);
+						}
+						aRecord.setItemList(itemsList);
+						researchStarterRecords.add(aRecord);
 					}
+					searchResponse.setRecordsList(researchStarterRecords);
+
 				}
 
 			}

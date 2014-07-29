@@ -80,7 +80,14 @@ public class Retrieve extends HttpServlet {
 		// Generate an eds api object from the above settings
 		EDSAPI api = new EDSAPI(edsapi_end_point, message_format, authManager,
 				sessionToken);
-		request.setAttribute("url", request.getRequestURL() + "?" + request.getQueryString());
+		
+		
+		//Save URL in case we need to return to this page after logging in. 
+		String thisUrl = request.getRequestURL() + "?" + request.getQueryString();
+		request.setAttribute("url", thisUrl);
+		//This allows us to return after a failed login
+		request.getSession().setAttribute("lastPageVisited", thisUrl);
+		
 		try {
 			// call the EDS API Retrieve method
 			record = api.requestRetrieve(parameters);

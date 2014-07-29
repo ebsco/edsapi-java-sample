@@ -135,6 +135,7 @@ public class initApp extends HttpServlet {
 						.getAuthenticationManager(request.getServletContext());
 				EDSAPI edsapi = new EDSAPI(edsapi_end_point, message_format,
 						authManager, "");
+				//Setup Guest Session on Init
 				SessionToken sessionToken = edsapi.createSession(profile, "y");
 				// display error page.
 				if (null == sessionToken) {

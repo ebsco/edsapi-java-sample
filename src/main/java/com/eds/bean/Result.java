@@ -35,7 +35,7 @@ public class Result {
 	private ArrayList<CustomLink> CustomLinkList = new ArrayList<CustomLink>();
 	private ArrayList<Link> otherFullTextLinks = new ArrayList<Link>();
 	private ArrayList<Item> itemList = new ArrayList<Item>();
-	private Map<String, Item> itemsMap;
+	
 
 	public String getPubTypeID() {
 		return pubTypeID;
@@ -158,13 +158,6 @@ public class Result {
 		this.otherFullTextLinks = otherFullTextLinks;
 	}
 
-	public Map<String, Item> getItemsMap() {
-		return itemsMap;
-	}
-
-	public void setItemsMap(Map<String, Item> itemsMap) {
-		this.itemsMap = itemsMap;
-	}
 
 	public ImageInfo getImageInfo() {
 		return imageInfo;

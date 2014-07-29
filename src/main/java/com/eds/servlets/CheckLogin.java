@@ -78,7 +78,6 @@ public class CheckLogin extends HttpServlet {
 		String pWord = request.getParameter("password");
 		ServletContext application = request.getServletContext();
 		HttpSession session = request.getSession();
-		request.getParameter("username");
 		if ((username.equals((String) application.getAttribute("user_name")) && pWord
 				.equals((String) application.getAttribute("password")))) {
 
@@ -104,11 +103,21 @@ public class CheckLogin extends HttpServlet {
 			// Generate an eds api object from the above settings
 			EDSAPI api = new EDSAPI(edsapi_end_point, message_format,
 					authManager, null);
+			
+			//Generate session token as non-guest
 			SessionToken sessionToken = api.createSession(profile, "n");
 			session.setAttribute("session_token", sessionToken.getSessionToken());
 			String returnURL = request.getParameter("hiddenURL");
+			
+			//If we clicked login twice, or failed at least once
 			if(returnURL.contains("login.jsp") || returnURL.equals("null") || null == returnURL  )
+			{
+				String lastPageUrl = (String)session.getAttribute("lastPageVisited");
+				if(null!= lastPageUrl)
+					response.sendRedirect(lastPageUrl);
 				response.sendRedirect("index.jsp");
+			}
+			
 			else
 				response.sendRedirect(returnURL);
 			}catch (Exception e) {

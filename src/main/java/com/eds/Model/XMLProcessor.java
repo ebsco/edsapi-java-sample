@@ -516,53 +516,46 @@ public class XMLProcessor implements IMessageProcessor {
 						for (int e = 0; e < relatedRecordsList.size(); e++) {
 							Element currentRelatedRecord = (relatedRecordsList
 									.get(e));
-							if (currentRelatedRecord.getChildText("Type",
-									currentRelatedRecord.getNamespace())
-									.equals("rs")) {
-								List<Element> researchStarters = currentRelatedRecord
-										.getChildren("Records",
-												currentRelatedRecord
+
+							List<Element> researchStarters = currentRelatedRecord
+									.getChildren("Records",
+											currentRelatedRecord.getNamespace());
+							for (int i = 0; i < researchStarters.size(); i++) {
+								Element currentResearchStarter = researchStarters
+										.get(e);
+								List<Element> researchStartersRecords = currentResearchStarter
+										.getChildren("Record",
+												currentResearchStarter
 														.getNamespace());
-								for (int i = 0; i < researchStarters.size(); i++) {
-									Element currentResearchStarter = researchStarters
-											.get(e);
-									List<Element> researchStartersRecords = currentResearchStarter
-											.getChildren("Record",
-													currentResearchStarter
+								ArrayList<Result> researchStarterRecordObjects = new ArrayList<Result>();
+								for (int q = 0; q < researchStartersRecords
+										.size(); q++) {
+									Element currentResearchStarterRecord = researchStartersRecords
+											.get(q);
+									Result aRecord = new Result();
+									Element header = currentResearchStarterRecord
+											.getChild("Header",
+													currentResearchStarterRecord
 															.getNamespace());
-									ArrayList<Result> researchStarterRecordObjects = new ArrayList<Result>();
-									for (int q = 0; q < researchStartersRecords
-											.size(); q++) {
-										Element currentResearchStarterRecord = researchStartersRecords
-												.get(q);
-										Result aRecord = new Result();
-										// aRecord.setResultId(Integer.parseInt(currentResearchStarterRecord.getChildText("ResultId")));
+									aRecord.setDbId(header.getChildText("DbId",
+											header.getNamespace()));
+									aRecord.setDbLabel(header.getChildText(
+											"DbLabel", header.getNamespace()));
+									aRecord.setAn(header.getChildText("An",
+											header.getNamespace()));
+									aRecord.setRelevancyScore(header
+											.getChildText("RelevancyScore",
+													header.getNamespace()));
+									aRecord.setPubTypeID(header.getChildText(
+											"PubTypeId", header.getNamespace()));
 
-										Element header = currentResearchStarterRecord
-												.getChild("Header",
-														currentResearchStarterRecord
-																.getNamespace());
-										aRecord.setDbId(header.getChildText(
-												"DbId", header.getNamespace()));
-										aRecord.setDbLabel(header.getChildText(
-												"DbLabel",
-												header.getNamespace()));
-										aRecord.setAn(header.getChildText("An",
-												header.getNamespace()));
-										aRecord.setRelevancyScore(header.getChildText("RelevancyScore",
-										 header.getNamespace()));
-										aRecord.setPubTypeID(header
-												.getChildText("PubTypeId",
-														header.getNamespace()));
-
-										aRecord.setpLink(currentResearchStarterRecord
-												.getChildText("Plink"));
-										Element imageInfo = currentResearchStarterRecord
-												.getChild("ImageInfo",
-														currentResearchStarterRecord
-																.getNamespace());
-										if(null != imageInfo)
-										{
+									aRecord.setpLink(currentResearchStarterRecord
+											.getChildText("Plink"));
+									Element imageInfo = currentResearchStarterRecord
+											.getChild("ImageInfo",
+													currentResearchStarterRecord
+															.getNamespace());
+									if (null != imageInfo) {
 										ImageInfo resultImageInfo = new ImageInfo();
 										Element coverArt = imageInfo.getChild(
 												"CoverArt",
@@ -580,58 +573,51 @@ public class XMLProcessor implements IMessageProcessor {
 										resultImageInfo
 												.setCoverArt(resultCoverArt);
 										aRecord.setImageInfo(resultImageInfo);
-										}
-										Element itemElement = currentResearchStarterRecord
-												.getChild("Items",
-														currentResearchStarterRecord
-																.getNamespace());
-										List<Element> itemElementList = itemElement
-												.getChildren("Item",
-														itemElement
-																.getNamespace());
-										HashMap<String, Item> researchStarterItems = new HashMap<String, Item>();
-										for (int z = 0; z < itemElementList
-												.size(); z++) {
-											Element currentItemElement = itemElementList
-													.get(z);
-											Item aResearchItem = new Item();
-											aResearchItem
-													.setLabel(currentItemElement
-															.getChildText(
-																	"Label",
-																	currentItemElement
-																			.getNamespace()));
-											aResearchItem
-													.setGroup(currentItemElement
-															.getChildText(
-																	"Group",
-																	currentItemElement
-																			.getNamespace()));
-											aResearchItem
-													.setData(currentItemElement
-															.getChildText(
-																	"Data",
-																	currentItemElement
-																			.getNamespace()));
-											researchStarterItems
-													.put(currentItemElement
-															.getChildText(
-																	"Name",
-																	currentItemElement
-																			.getNamespace()),
-															aResearchItem);
-										}
-										aRecord.setItemsMap(researchStarterItems);
-										researchStarterRecordObjects
-												.add(aRecord);
 									}
-
-									searchResponse
-											.setRecordsList(researchStarterRecordObjects);
-
+									Element itemElement = currentResearchStarterRecord
+											.getChild("Items",
+													currentResearchStarterRecord
+															.getNamespace());
+									List<Element> itemElementList = itemElement
+											.getChildren("Item",
+													itemElement.getNamespace());
+									ArrayList<Item> researchStarterItemsList = new ArrayList<Item>();
+									for (int z = 0; z < itemElementList.size(); z++) {
+										Element currentItemElement = itemElementList
+												.get(z);
+										Item aResearchItem = new Item();
+										aResearchItem
+												.setLabel(currentItemElement
+														.getChildText(
+																"Label",
+																currentItemElement
+																		.getNamespace()));
+										aResearchItem
+												.setGroup(currentItemElement
+														.getChildText(
+																"Group",
+																currentItemElement
+																		.getNamespace()));
+										aResearchItem
+												.setData(currentItemElement
+														.getChildText(
+																"Data",
+																currentItemElement
+																		.getNamespace()));
+										researchStarterItemsList
+												.add(
+														aResearchItem);
+									}
+									aRecord.setItemList(researchStarterItemsList);
+									researchStarterRecordObjects.add(aRecord);
 								}
+
+								searchResponse
+										.setRecordsList(researchStarterRecordObjects);
+
 							}
 						}
+
 					}
 				}
 
@@ -814,8 +800,8 @@ public class XMLProcessor implements IMessageProcessor {
 						}
 					}
 					info.setAvailableExpandersList(expandersList);
-					//Process Related Content
-					
+					// Process Related Content
+
 					ArrayList<AvailableRelatedContent> relatedContentList = new ArrayList<AvailableRelatedContent>();
 					Element availableRelatedContent = availableSearchCriteria
 							.getChild("AvailableRelatedContent",
@@ -828,14 +814,22 @@ public class XMLProcessor implements IMessageProcessor {
 							Element elementAvailableRelatedContent = (Element) availableRelatedContentList
 									.get(m);
 							AvailableRelatedContent aRC = new AvailableRelatedContent();
-							String type = elementAvailableRelatedContent.getChildText("Type",
-									elementAvailableRelatedContent.getNamespace());
-							String label = elementAvailableRelatedContent.getChildText("Label",
-									elementAvailableRelatedContent.getNamespace());
-							String defaultOn = elementAvailableRelatedContent.getChildText("DefaultOn",
-									elementAvailableRelatedContent.getNamespace());
-							String addAction = elementAvailableRelatedContent.getChildText("AddAction",
-									elementAvailableRelatedContent.getNamespace());
+							String type = elementAvailableRelatedContent
+									.getChildText("Type",
+											elementAvailableRelatedContent
+													.getNamespace());
+							String label = elementAvailableRelatedContent
+									.getChildText("Label",
+											elementAvailableRelatedContent
+													.getNamespace());
+							String defaultOn = elementAvailableRelatedContent
+									.getChildText("DefaultOn",
+											elementAvailableRelatedContent
+													.getNamespace());
+							String addAction = elementAvailableRelatedContent
+									.getChildText("AddAction",
+											elementAvailableRelatedContent
+													.getNamespace());
 							aRC.setType(type);
 							aRC.setLabel(label);
 							aRC.setDefaultOn(defaultOn);
@@ -844,9 +838,7 @@ public class XMLProcessor implements IMessageProcessor {
 						}
 					}
 					info.setAvailableRelatedContent(relatedContentList);
-					
-					
-					
+
 					// process available limiters
 					ArrayList<AvailableLimiter> limitersList = new ArrayList<AvailableLimiter>();
 					Element availableLimiters = availableSearchCriteria

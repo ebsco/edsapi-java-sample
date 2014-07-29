@@ -554,6 +554,7 @@
 									for(int i =0; i <researchStarters; i++){
 									Result currentResearchStarter =resultList.getRecordsList().get(i);
 								%>
+								
 
 								<div data-placard="<%query.toString();%>"
 									class="placard-container">
@@ -573,9 +574,32 @@
 										<%
 											}
 										%>
+										<%
+																		String title = "";
+										                            
+										                                String abstracts = "";
+										                                String source ="";
+										                                String subject = "";
+										                               
+										                                     
+										                                for(int c=0; c< currentResearchStarter.getItemList().size();c++){
+										                                    Item item = currentResearchStarter.getItemList().get(c);
+										                                    if(item.getGroup().equals("Ti"))                        
+										                                        title=item.getData();                
+										                                    if(item.getGroup().equals("Src"))                        
+										                                        source=item.getData();   
+										                                    if(item.getGroup().equals("Ab"))
+										                                        abstracts= item.getData();
+										                                            
+										                                    if(item.getGroup().equals("Su")){
+										                                        subject=item.getData();
+										                                        subject=subject.replace("<br />", ";  ");
+										                                    } 
+										                                }
+										%>
 										<div class="placard-body">
 											<p class="placard-branding">
-												<strong><%out.println("Research Starter"); %></strong>
+												<strong><%out.println(currentResearchStarter.getDbLabel()); %></strong>
 											</p>
 
 											<h3 class="placard-title evt-truncate truncate"
@@ -584,8 +608,8 @@
 													href="<%String picUrl = "Retrieve?dbid=" + currentResearchStarter.getDbId() + "&an=" + currentResearchStarter.getAn() + "&highlight=" + query.getTerm(); out.println(picUrl);%>"
 													title="Research Starter" id="PlacardTitle1_ers"
 													class="color-p4 title-link"><strong>
-														<%if(null!= currentResearchStarter.getItemsMap().get("Title"))
-															out.println((currentResearchStarter.getItemsMap().get("Title").getData()));
+														<%if(null!= title)
+															out.println(title);
 														
 														%>
 												</strong></a>
@@ -593,19 +617,20 @@
 
 											<p class="placard-abstract">
 												<%
-													out.println(currentResearchStarter.getItemsMap().get("Abstract").getData());
-												if(null!= currentResearchStarter.getItemsMap().get("Title"))
-														{
+													out.println(abstracts);
+												if(!loggedOut)
+												{
 												%>
-												<a href="<%out.println(picUrl);%>" title="More"
+												<a href="<%out.println(picUrl);%>"title="More"
 													id="PlacardAbstract1_ers" class="more-link"><strong>More</strong></a>
 											</p>
-
+												<%} %>
 											<p class="placard-source">
 												<%
+												if(null != source)
+												{
+													out.println(source);
 														}
-												if(null!= currentResearchStarter.getItemsMap().get("TitleSource"))
-													out.println((currentResearchStarter.getItemsMap().get("TitleSource").getData()));
 										
 												%>
 											</p>
@@ -765,7 +790,7 @@
 												}
 											%>
 											<a>Relevancy:</a>
-											<meter value = "<%=result.getRelevancyScore()%>" min = "0" max="28d00" low = "1300" high="1800" optimum="2000" ></meter>
+											<meter value = "<%=result.getRelevancyScore()%>" min = "0" max="2800" low = "1300" high="1800" optimum="2000" ></meter>
 											<div class="links">
 												<%
 													if(null != result.getHtmlAvailable() && result.getHtmlAvailable().equalsIgnoreCase("1")){
