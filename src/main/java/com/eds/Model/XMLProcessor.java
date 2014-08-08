@@ -23,7 +23,6 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import org.jdom2.Content;
 import org.jdom2.Document;
