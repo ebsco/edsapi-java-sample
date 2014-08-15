@@ -571,9 +571,14 @@
 												alt="IMAGE"
 												src="<%out.println(currentResearchStarter.getImageInfo().getCoverArt().getTarget());%>"></a>
 										</div>
+										<div class="placard-body">
 										<%
 											}
+											else{
 										%>
+										<div class="placard-bodywithimg">
+										
+										<%} %>
 										<%
 																		String title = "";
 										                            
@@ -597,7 +602,7 @@
 										                                    } 
 										                                }
 										%>
-										<div class="placard-body">
+									
 											<p class="placard-branding">
 												<strong><%out.println(currentResearchStarter.getDbLabel()); %></strong>
 											</p>

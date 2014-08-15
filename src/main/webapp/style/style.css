@@ -695,10 +695,11 @@ ul.filters {
 
 
 .placard-container {
-    border: 1px solid #e7e7e7;
+    border: 1px solid black;
     display: table;
     margin-bottom: 20px;
-    width: 100%;
+    min-with:660px;
+    max-width: 660px;
 }
 .placard-container.loading {
     height: 20px;
@@ -708,6 +709,7 @@ ul.filters {
 }
 .placard-img {
     display: table-cell;
+    min-width: 130px;
     max-width: 130px;
     overflow: hidden;
     vertical-align: middle;
@@ -721,7 +723,14 @@ ul.filters {
     display: table-cell;
     padding: 5px 10px;
     vertical-align: middle;
+    max-width: 530px;
     width: 100%;
+}
+.placard-bodywithimg {
+    display: table-cell;
+    padding: 5px 10px;
+    vertical-align: middle;
+    max-width: 660px;
 }
 .placard .title-link {
     display: inline;
@@ -735,6 +744,7 @@ ul.filters {
 }
 #content .placard .placard-abstract {
     padding: 5px 0;
+    max-width: 530px;
 }
 
 .hidden {
